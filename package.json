@@ -6,14 +6,23 @@
   "author": "vincentvanity",
   "scripts": {
     "start": "node --watch server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "format": "prettier --write ."
   },
   "keywords": [],
   "devDependencies": {
+    "@eslint/js": "^9.3.0",
     "dotenv": "^16.4.5",
+    "eslint": "9.x",
     "express": "^4.19.2",
+    "globals": "^15.3.0",
     "graphql": "^16.8.1",
     "graphql-http": "^1.22.1",
+    "prettier": "^3.2.5",
     "ruru": "^2.0.0-beta.11"
-  }
+  },
+  "main": "server.js",
+  "repository": "https://github.com/vinceterp/pharmazing-server.git"
 }

@@ -1,4 +1,4 @@
-const { buildSchema } = require("graphql")
+const { buildSchema } = require("graphql");
 
 // Construct a schema, using GraphQL schema language
 const schema = buildSchema(`
@@ -30,4 +30,4 @@ type Address {
 }
 `);
 
-module.exports = { schema }
+module.exports = { schema };

@@ -1,0 +1,7 @@
+dist
+node_modules
+public
+certs
+.nvmrc
+.env
+yarn.lock
