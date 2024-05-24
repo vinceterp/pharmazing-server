@@ -12,12 +12,12 @@ export const Address = new GraphQLObjectType({
   name: "Address",
   fields: {
     userId: { type: GraphQLID },
-    addressLine1: { type: new GraphQLNonNull(GraphQLString) },
+    addressLine1: { type: GraphQLString },
     addressLine2: { type: GraphQLString },
-    city: { type: new GraphQLNonNull(GraphQLString) },
-    parish: { type: new GraphQLNonNull(GraphQLString) },
-    zip: { type: new GraphQLNonNull(GraphQLString) },
-    country: { type: new GraphQLNonNull(GraphQLString) },
+    city: { type: GraphQLString },
+    parish: { type: GraphQLString },
+    zip: { type: GraphQLString },
+    country: { type: GraphQLString },
   },
 });
 

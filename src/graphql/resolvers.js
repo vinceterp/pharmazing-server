@@ -85,3 +85,44 @@ export const resolveCardIds = async (parent) => {
     return [e.message];
   }
 };
+
+export const createUserResolver = (_root, args) => {
+  const {
+    email,
+    password,
+    firstName,
+    lastName,
+    addressLine1,
+    addressLine2,
+    city,
+    parish,
+    country,
+    zip,
+  } = args;
+  try {
+    if (users.find((user) => user.email === email)) {
+      throw new Error(UserErrorMessage.ALREADY_EXISTS);
+    }
+
+    const user = {
+      userId: Math.floor(Math.random() * 1000000000000),
+      email,
+      password,
+      firstName,
+      lastName,
+      cardId: [],
+      address: {
+        addressLine1,
+        addressLine2,
+        city,
+        parish,
+        country,
+        zip,
+      },
+    };
+    users.push(user);
+    return user;
+  } catch (e) {
+    return { email, error: e.message };
+  }
+};
