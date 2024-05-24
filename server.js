@@ -1,25 +1,27 @@
-var express = require("express");
-var { createHandler } = require("graphql-http/lib/use/express");
-var { ruruHTML } = require("ruru/server");
-var { schema } = require("./src/graphql/schema");
-var { root } = require("./src/graphql/resolvers");
-var path = require("path");
+import express from "express";
+// const { createHandler } = require("graphql-http/lib/use/express");
+import { ruruHTML } from "ruru/server";
+import { schema } from "./src/graphql/schema.js";
+import path from "path";
+import { createYoga } from "graphql-yoga";
+import dotenv from "dotenv";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
+const __dirname = path.dirname(__filename); // get the name of the directory
 
 //setup env variables
-require("dotenv").config();
+dotenv.config();
 
 const PORT = process.env.PORT || 5100;
 
-var app = express();
+const app = express();
 
-// Create and use the GraphQL handler.
-app.all(
-  "/graphql",
-  createHandler({
-    schema: schema,
-    rootValue: root,
-  }),
-);
+const gqlServer = createYoga({
+  schema,
+});
+
+app.use("/graphql", gqlServer);
 
 app.use("/media", express.static(path.join(__dirname, "public")));
 

@@ -1,4 +1,3 @@
-// The root provides a resolver function for each API endpoint
 let users = [
   {
     userId: "1234567890",
@@ -17,23 +16,21 @@ let users = [
   },
 ];
 
-const root = {
-  user(args) {
-    const { email, password } = args;
-    try {
-      const user = users.find(
-        (user) => user.email === email && user.password === password,
-      );
-      if (!user) {
-        throw new Error("User not found");
-      }
-      const token = "1234567890";
-      user.token = token;
-      return [user];
-    } catch (e) {
-      return [{ email, error: e.message }];
+export const signin = (_root, args) => {
+  const { email, password } = args;
+  try {
+    const user = users.find(
+      (user) => user.email === email && user.password === password,
+    );
+    if (!user) {
+      throw new Error("User not found");
     }
-  },
+    const token = "1234567890";
+    user.token = token;
+    return [user];
+  } catch (e) {
+    return [{ email, error: e.message }];
+  }
 };
 
-module.exports = { root };
+// module.exports = { signin };

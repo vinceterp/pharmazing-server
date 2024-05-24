@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "license": "MIT",
+  "type": "module",
   "author": "vincentvanity",
   "scripts": {
     "start": "node --watch server.js",
@@ -16,13 +17,15 @@
     "@eslint/js": "^9.3.0",
     "dotenv": "^16.4.5",
     "eslint": "9.x",
-    "express": "^4.19.2",
     "globals": "^15.3.0",
-    "graphql": "^16.8.1",
-    "graphql-http": "^1.22.1",
     "prettier": "^3.2.5",
     "ruru": "^2.0.0-beta.11"
   },
   "main": "server.js",
-  "repository": "https://github.com/vinceterp/pharmazing-server.git"
+  "repository": "https://github.com/vinceterp/pharmazing-server.git",
+  "dependencies": {
+    "express": "^4.19.2",
+    "graphql": "^16.8.1",
+    "graphql-yoga": "^5.3.1"
+  }
 }
