@@ -6,6 +6,7 @@ import {
   GraphQLList,
   GraphQLID,
 } from "graphql";
+import { resolveCardIds } from "./resolvers.js";
 
 export const Address = new GraphQLObjectType({
   name: "Address",
@@ -30,7 +31,10 @@ export const User = new GraphQLObjectType({
     password: { type: GraphQLString },
     age: { type: GraphQLInt },
     address: { type: Address },
-    cardId: { type: new GraphQLList(new GraphQLNonNull(GraphQLString)) },
+    cardId: {
+      type: new GraphQLList(new GraphQLNonNull(GraphQLString)),
+      resolve: resolveCardIds,
+    },
     error: { type: GraphQLString },
     token: { type: GraphQLString },
   },

@@ -1,5 +1,20 @@
 import { UserErrorMessage } from "../utils/enums.js";
 
+let paymentCards = [
+  {
+    cardId: "eerwtyry",
+    userId: "1234567890",
+    cardType: "VISA",
+    cardNumber: "123456789012",
+  },
+  {
+    cardId: "f456354g",
+    userId: "1234560",
+    cardType: "MASTERCARD",
+    cardNumber: "45666543655",
+  },
+];
+
 let users = [
   {
     userId: "1234567890",
@@ -56,5 +71,17 @@ export const getAllUsers = (_root, _args) => {
     return users;
   } catch (e) {
     return [{ error: e.message }];
+  }
+};
+
+export const resolveCardIds = async (parent) => {
+  try {
+    const cardIds = paymentCards
+      .filter((card) => card.userId === parent.userId)
+      .map((card) => card.cardId);
+    if (!cardIds.length) throw new Error("no cards found");
+    return cardIds;
+  } catch (e) {
+    return [e.message];
   }
 };
