@@ -4,11 +4,13 @@ import {
   GraphQLInt,
   GraphQLNonNull,
   GraphQLList,
+  GraphQLID,
 } from "graphql";
 
 export const Address = new GraphQLObjectType({
   name: "Address",
   fields: {
+    userId: { type: GraphQLID },
     addressLine1: { type: new GraphQLNonNull(GraphQLString) },
     addressLine2: { type: GraphQLString },
     city: { type: new GraphQLNonNull(GraphQLString) },
@@ -21,7 +23,7 @@ export const Address = new GraphQLObjectType({
 export const User = new GraphQLObjectType({
   name: "User",
   fields: {
-    userId: { type: GraphQLString },
+    userId: { type: new GraphQLNonNull(GraphQLID) },
     firstName: { type: GraphQLString },
     lastName: { type: GraphQLString },
     email: { type: new GraphQLNonNull(GraphQLString) },

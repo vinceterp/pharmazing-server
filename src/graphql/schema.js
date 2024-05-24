@@ -6,7 +6,7 @@ import {
   GraphQLString,
 } from "graphql";
 import { User } from "./types.js";
-import { signin } from "./resolvers.js";
+import { signin, getAllUsers } from "./resolvers.js";
 import { createSchema } from "graphql-yoga";
 
 const gqlSchema = new GraphQLSchema({
@@ -20,6 +20,10 @@ const gqlSchema = new GraphQLSchema({
           password: { type: new GraphQLNonNull(GraphQLString) },
         },
         resolve: signin,
+      },
+      getUsers: {
+        type: new GraphQLNonNull(new GraphQLList(User)),
+        resolve: getAllUsers,
       },
     },
   }),

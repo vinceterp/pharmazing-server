@@ -33,4 +33,10 @@ export const signin = (_root, args) => {
   }
 };
 
-// module.exports = { signin };
+export const getAllUsers = (_root, _args) => {
+  try {
+    return users;
+  } catch (e) {
+    return [{ error: e.message }];
+  }
+};
