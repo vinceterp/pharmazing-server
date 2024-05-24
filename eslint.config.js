@@ -3,9 +3,10 @@ import pluginJs from "@eslint/js";
 
 export default [
   {
-    files: ["**/*.js"],
+    files: ["**/*.js", "**/*.mjs", "**/*.cjs"],
     languageOptions: { sourceType: "module" },
   },
   { languageOptions: { globals: globals.node } },
-  { plugins: pluginJs.configs.recommended, rules: { "no-unused-vars": "off" } },
+  pluginJs.configs.recommended,
+  { rules: { "no-unused-vars": "warn" } },
 ];

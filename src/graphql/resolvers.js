@@ -1,3 +1,5 @@
+import { UserErrorMessage } from "../utils/enums.js";
+
 let users = [
   {
     userId: "1234567890",
@@ -14,6 +16,21 @@ let users = [
       zip: "12345",
     },
   },
+  {
+    userId: "1234560",
+    email: "me2@me.com",
+    password: "password",
+    firstName: "Jane",
+    lastName: "Doe",
+    cardId: [],
+    address: {
+      addressLine1: "123 Master Street",
+      city: "St. James",
+      parish: "St. Andrew",
+      country: "Jamaica",
+      zip: "12325",
+    },
+  },
 ];
 
 export const signin = (_root, args) => {
@@ -23,18 +40,19 @@ export const signin = (_root, args) => {
       (user) => user.email === email && user.password === password,
     );
     if (!user) {
-      throw new Error("User not found");
+      throw new Error(UserErrorMessage.NOT_FOUND);
     }
     const token = "1234567890";
     user.token = token;
-    return [user];
+    return user;
   } catch (e) {
-    return [{ email, error: e.message }];
+    return { email, error: e.message };
   }
 };
 
 export const getAllUsers = (_root, _args) => {
   try {
+    if (!users) throw new Error(UserErrorMessage.NOT_FOUND);
     return users;
   } catch (e) {
     return [{ error: e.message }];

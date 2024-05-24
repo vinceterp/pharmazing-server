@@ -14,15 +14,15 @@ const gqlSchema = new GraphQLSchema({
     name: "Query",
     fields: {
       signin: {
-        type: new GraphQLNonNull(new GraphQLList(User)),
+        type: User,
         args: {
           email: { type: new GraphQLNonNull(GraphQLString) },
           password: { type: new GraphQLNonNull(GraphQLString) },
         },
         resolve: signin,
       },
-      getUsers: {
-        type: new GraphQLNonNull(new GraphQLList(User)),
+      getAllUsers: {
+        type: new GraphQLList(User),
         resolve: getAllUsers,
       },
     },

@@ -23,10 +23,10 @@ export const Address = new GraphQLObjectType({
 export const User = new GraphQLObjectType({
   name: "User",
   fields: {
-    userId: { type: new GraphQLNonNull(GraphQLID) },
+    userId: { type: GraphQLID },
     firstName: { type: GraphQLString },
     lastName: { type: GraphQLString },
-    email: { type: new GraphQLNonNull(GraphQLString) },
+    email: { type: GraphQLString },
     password: { type: GraphQLString },
     age: { type: GraphQLInt },
     address: { type: Address },
