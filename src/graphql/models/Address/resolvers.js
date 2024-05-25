@@ -6,6 +6,7 @@ const addresses = [
     addressId: "1",
     primary: true,
     addressLine1: "123 Main Street",
+    addressLine2: "Apt 1",
     city: "Kingston",
     parish: "St. Andrew",
     country: "Jamaica",
@@ -25,10 +26,10 @@ const addresses = [
 
 export const addressResolver = (parent) => {
   try {
-    if (!addresses) throw new Error(AddressErrorMessage.NOT_FOUND);
     const userAddresses = addresses.filter(
       (address) => address.userId === parent.userId,
     );
+    if (!userAddresses.length) throw new Error(AddressErrorMessage.NOT_FOUND);
     return userAddresses;
   } catch {
     return [];

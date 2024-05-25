@@ -8,6 +8,7 @@ let users = [
     password: "password",
     firstName: "John",
     lastName: "Doe",
+    age: 22,
   },
   {
     userId: "1234560",
