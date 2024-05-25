@@ -1,19 +1,5 @@
-import { UserErrorMessage } from "../utils/enums.js";
-
-let paymentCards = [
-  {
-    cardId: "eerwtyry",
-    userId: "1234567890",
-    cardType: "VISA",
-    cardNumber: "123456789012",
-  },
-  {
-    cardId: "f456354g",
-    userId: "1234560",
-    cardType: "MASTERCARD",
-    cardNumber: "45666543655",
-  },
-];
+/* eslint-disable no-unused-vars */
+import { UserErrorMessage } from "../../../utils/enums.js";
 
 let users = [
   {
@@ -22,14 +8,6 @@ let users = [
     password: "password",
     firstName: "John",
     lastName: "Doe",
-    cardId: [],
-    address: {
-      addressLine1: "123 Main Street",
-      city: "Kingston",
-      parish: "St. Andrew",
-      country: "Jamaica",
-      zip: "12345",
-    },
   },
   {
     userId: "1234560",
@@ -37,14 +15,6 @@ let users = [
     password: "password",
     firstName: "Jane",
     lastName: "Doe",
-    cardId: [],
-    address: {
-      addressLine1: "123 Master Street",
-      city: "St. James",
-      parish: "St. Andrew",
-      country: "Jamaica",
-      zip: "12325",
-    },
   },
 ];
 
@@ -74,19 +44,7 @@ export const getAllUsers = (_root, _args) => {
   }
 };
 
-export const resolveCardIds = async (parent) => {
-  try {
-    const cardIds = paymentCards
-      .filter((card) => card.userId === parent.userId)
-      .map((card) => card.cardId);
-    if (!cardIds.length) throw new Error("no cards found");
-    return cardIds;
-  } catch (e) {
-    return [e.message];
-  }
-};
-
-export const createUserResolver = (_root, args) => {
+export const createUser = (_root, args) => {
   const {
     email,
     password,
@@ -103,23 +61,16 @@ export const createUserResolver = (_root, args) => {
     if (users.find((user) => user.email === email)) {
       throw new Error(UserErrorMessage.ALREADY_EXISTS);
     }
+    const userId = Math.floor(Math.random() * 10000000);
 
     const user = {
-      userId: Math.floor(Math.random() * 1000000000000),
+      userId,
       email,
       password,
       firstName,
       lastName,
-      cardId: [],
-      address: {
-        addressLine1,
-        addressLine2,
-        city,
-        parish,
-        country,
-        zip,
-      },
     };
+    // call the createAddress resolver here with the extra address data from the parameters
     users.push(user);
     return user;
   } catch (e) {
