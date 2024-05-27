@@ -1,8 +1,9 @@
 /* eslint-disable no-unused-vars */
 import { GraphQLError } from "graphql";
 import { UserErrorMessage } from "../../../utils/enums.js";
+import { createAddressResolver } from "../Address/resolvers.js";
 
-let users = [
+export let users = [
   {
     userId: "1234567890",
     email: "me@me.com",
@@ -20,7 +21,7 @@ let users = [
   },
 ];
 
-export const signin = (_root, args) => {
+export const signInResolver = (_root, args) => {
   const { email, password } = args;
   try {
     const user = users.find(
@@ -37,7 +38,7 @@ export const signin = (_root, args) => {
   }
 };
 
-export const getAllUsers = (_root, _args) => {
+export const getAllUsersResolver = (_root, _args) => {
   try {
     if (!users) throw new GraphQLError(UserErrorMessage.NOT_FOUND);
     return users;
@@ -46,7 +47,7 @@ export const getAllUsers = (_root, _args) => {
   }
 };
 
-export const createUser = (_root, args) => {
+export const createUserResolver = (_root, args) => {
   const { user } = args;
   const {
     email,
@@ -59,6 +60,7 @@ export const createUser = (_root, args) => {
     parish,
     country,
     zip,
+    primary,
   } = user;
   try {
     if (users.find((user) => user.email === email)) {
@@ -73,6 +75,19 @@ export const createUser = (_root, args) => {
       firstName,
       lastName,
     };
+
+    createAddressResolver(false, false, null, {
+      userId,
+      address: {
+        addressLine1: addressLine1 || "",
+        addressLine2: addressLine2 || "",
+        city: city || "",
+        parish: parish || "",
+        country: country || "",
+        zip: zip || "",
+        primary: primary || false,
+      },
+    });
     // call the createAddress resolver here with the extra address data from the parameters
     users.push(newUser);
     return newUser;
@@ -81,7 +96,7 @@ export const createUser = (_root, args) => {
   }
 };
 
-export const editUser = (_root, args) => {
+export const editUserResolver = (_root, args) => {
   try {
     const { email, firstName, lastName, age, userId } = args;
 
@@ -100,7 +115,7 @@ export const editUser = (_root, args) => {
   }
 };
 
-export const deleteUser = (_root, args) => {
+export const deleteUserResolver = (_root, args) => {
   try {
     const { user } = args;
     const { userId, password } = user;

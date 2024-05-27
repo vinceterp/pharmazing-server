@@ -1,8 +1,8 @@
 import { User } from "./types.js";
 import {
-  createUser as createUserResolver,
-  deleteUser as deleteUserResolver,
-  editUser as editUserResolver,
+  createUserResolver,
+  deleteUserResolver,
+  editUserResolver,
 } from "./resolvers.js";
 import {
   CreateUserInputType,

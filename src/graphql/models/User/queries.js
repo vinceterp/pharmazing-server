@@ -1,12 +1,9 @@
 import { User } from "./types.js";
 import { GraphQLString, GraphQLNonNull, GraphQLList } from "graphql";
-import {
-  signin as signInResolver,
-  getAllUsers as getAllUsersResolver,
-} from "./resolvers.js";
+import { signInResolver, getAllUsersResolver } from "./resolvers.js";
 import _ from "lodash";
 
-const signin = {
+const signIn = {
   type: User,
   args: {
     email: { type: new GraphQLNonNull(GraphQLString) },
@@ -20,7 +17,7 @@ const getAllUsers = {
   resolve: getAllUsersResolver,
 };
 
-const queries = _.merge({ signin }, { getAllUsers });
+const queries = _.merge({ signIn }, { getAllUsers });
 
 export const userQueries = {
   name: "Query",

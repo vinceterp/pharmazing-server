@@ -6,8 +6,9 @@ import {
   GraphQLList,
   GraphQLNonNull,
   GraphQLInputObjectType,
+  GraphQLBoolean,
 } from "graphql";
-import { addressResolver } from "../Address/resolvers.js";
+import { addressFieldResolver } from "../Address/resolvers.js";
 import { Address } from "../Address/types.js";
 
 export const User = new GraphQLObjectType({
@@ -21,7 +22,7 @@ export const User = new GraphQLObjectType({
     age: { type: GraphQLInt },
     address: {
       type: new GraphQLList(new GraphQLNonNull(Address)),
-      resolve: addressResolver,
+      resolve: addressFieldResolver,
     },
     token: { type: GraphQLString },
   },
@@ -40,6 +41,7 @@ export const CreateUserInputType = new GraphQLInputObjectType({
     parish: { type: GraphQLString },
     country: { type: GraphQLString },
     zip: { type: GraphQLString },
+    primary: { type: GraphQLBoolean },
   },
 });
 

@@ -1,5 +1,7 @@
 import { GraphQLError } from "graphql";
-import { AddressErrorMessage } from "../../../utils/enums.js";
+import { AddressErrorMessage, UserErrorMessage } from "../../../utils/enums.js";
+import { users } from "../User/resolvers.js";
+import _ from "lodash";
 
 const addresses = [
   {
@@ -25,14 +27,60 @@ const addresses = [
   },
 ];
 
-export const addressResolver = (parent) => {
+export const addressQueryResolver = (checkAddress, _parent, args) => {
   try {
+    const { userId } = args;
     const userAddresses = addresses.filter(
-      (address) => address.userId === parent.userId,
+      (address) => address.userId === userId,
+    );
+    if (!userAddresses.length && checkAddress)
+      throw new GraphQLError(AddressErrorMessage.NOT_FOUND);
+    return userAddresses;
+  } catch (e) {
+    return e;
+  }
+};
+
+export const addressFieldResolver = (parent) => {
+  try {
+    const { userId } = parent;
+    const userAddresses = addresses.filter(
+      (address) => address.userId === userId,
     );
     if (!userAddresses.length)
       throw new GraphQLError(AddressErrorMessage.NOT_FOUND);
     return userAddresses;
+  } catch (e) {
+    return e;
+  }
+};
+
+export const createAddressResolver = (
+  checkAddress,
+  checkUserId,
+  _parent,
+  args,
+) => {
+  try {
+    const { userId, address } = args;
+    const userFound = users.findIndex((user) => user.userId === userId);
+    if (userFound === -1 && checkUserId)
+      throw new GraphQLError(UserErrorMessage.NOT_FOUND);
+    const userAddresses = addressQueryResolver(checkAddress, null, { userId });
+    userAddresses.forEach((userAddress) => {
+      const { addressId, ...rest } = userAddress;
+      if (_.isEqual(rest, { userId, ...address })) {
+        throw new GraphQLError(AddressErrorMessage.ALREADY_EXISTS);
+      }
+    });
+    const addressId = Math.floor(Math.random() * 10000000);
+    const newAddress = {
+      userId,
+      addressId,
+      ...address,
+    };
+    addresses.push(newAddress);
+    return newAddress;
   } catch (e) {
     return e;
   }

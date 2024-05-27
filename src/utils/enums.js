@@ -1,5 +1,5 @@
 /**
- * Enum for signin errors.
+ * Enum for signIn errors.
  * @readonly
  * @enum string
  */
