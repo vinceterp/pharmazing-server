@@ -1,3 +1,4 @@
+import { GraphQLError } from "graphql";
 import { AddressErrorMessage } from "../../../utils/enums.js";
 
 const addresses = [
@@ -29,9 +30,10 @@ export const addressResolver = (parent) => {
     const userAddresses = addresses.filter(
       (address) => address.userId === parent.userId,
     );
-    if (!userAddresses.length) throw new Error(AddressErrorMessage.NOT_FOUND);
+    if (!userAddresses.length)
+      throw new GraphQLError(AddressErrorMessage.NOT_FOUND);
     return userAddresses;
-  } catch {
-    return [];
+  } catch (e) {
+    return e;
   }
 };

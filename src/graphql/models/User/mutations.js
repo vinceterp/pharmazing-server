@@ -1,26 +1,35 @@
 import { User } from "./types.js";
-import { GraphQLNonNull, GraphQLString } from "graphql";
-import { createUser as createUserResolver } from "./resolvers.js";
+import {
+  createUser as createUserResolver,
+  deleteUser as deleteUserResolver,
+  editUser as editUserResolver,
+} from "./resolvers.js";
+import {
+  CreateUserInputType,
+  EditUserInputType,
+  DeleteUserInputType,
+} from "./types.js";
 import _ from "lodash";
 
 const createUser = {
   type: User,
-  args: {
-    email: { type: new GraphQLNonNull(GraphQLString) },
-    password: { type: new GraphQLNonNull(GraphQLString) },
-    firstName: { type: new GraphQLNonNull(GraphQLString) },
-    lastName: { type: new GraphQLNonNull(GraphQLString) },
-    addressLine1: { type: GraphQLString },
-    addressLine2: { type: GraphQLString },
-    city: { type: GraphQLString },
-    parish: { type: GraphQLString },
-    country: { type: GraphQLString },
-    zip: { type: GraphQLString },
-  },
+  args: { user: { type: CreateUserInputType } },
   resolve: createUserResolver,
 };
 
-const mutations = _.merge({ createUser });
+const editUser = {
+  type: User,
+  args: { user: { type: EditUserInputType } },
+  resolve: editUserResolver,
+};
+
+const deleteUser = {
+  type: User,
+  args: { user: { type: DeleteUserInputType } },
+  resolve: deleteUserResolver,
+};
+
+const mutations = _.merge({ createUser }, { editUser }, { deleteUser });
 
 export const userMutations = {
   name: "Mutation",
