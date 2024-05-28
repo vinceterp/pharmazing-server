@@ -34,3 +34,17 @@ export const CreateAddressInputType = new GraphQLInputObjectType({
     country: { type: new GraphQLNonNull(GraphQLString) },
   },
 });
+
+export const EditAddressInput = new GraphQLInputObjectType({
+  name: "EditAddressInput",
+  fields: {
+    addressId: { type: new GraphQLNonNull(GraphQLID) },
+    primary: { type: GraphQLBoolean },
+    addressLine1: { type: GraphQLString },
+    addressLine2: { type: GraphQLString },
+    city: { type: GraphQLString },
+    parish: { type: GraphQLString },
+    zip: { type: GraphQLString },
+    country: { type: GraphQLString },
+  },
+});

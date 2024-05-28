@@ -73,7 +73,8 @@ export const createAddressResolver = (
         throw new GraphQLError(AddressErrorMessage.ALREADY_EXISTS);
       }
     });
-    const addressId = Math.floor(Math.random() * 10000000);
+    //if primary is true, set all other addresses primary to false
+    const addressId = Math.floor(Math.random() * 10000000).toString();
     const newAddress = {
       userId,
       addressId,
@@ -81,6 +82,42 @@ export const createAddressResolver = (
     };
     addresses.push(newAddress);
     return newAddress;
+  } catch (e) {
+    return e;
+  }
+};
+
+export const editAddressResolver = (_root, args) => {
+  try {
+    const { userId, address } = args;
+    const {
+      addressId,
+      addressLine1,
+      addressLine2,
+      primary,
+      city,
+      parish,
+      country,
+      zip,
+    } = address;
+    if (!addresses.length)
+      throw new GraphQLError(AddressErrorMessage.NOT_FOUND);
+    const addressIndex = addresses.findIndex(
+      (address) => address.addressId === addressId,
+    );
+    if (addressIndex === -1)
+      throw new GraphQLError(AddressErrorMessage.NOT_FOUND);
+    addresses[addressIndex] = {
+      ...addresses[addressIndex],
+      addressLine1: addressLine1 || addresses[addressIndex].addressLine1,
+      addressLine2: addressLine2 || addresses[addressIndex].addressLine2,
+      primary: primary || addresses[addressIndex].primary,
+      city: city || addresses[addressIndex].city,
+      parish: parish || addresses[addressIndex].parish,
+      country: country || addresses[addressIndex].country,
+      zip: zip || addresses[addressIndex].zip,
+    };
+    return { ...addresses[addressIndex] };
   } catch (e) {
     return e;
   }

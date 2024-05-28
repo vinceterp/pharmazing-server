@@ -61,12 +61,13 @@ export const createUserResolver = (_root, args) => {
     country,
     zip,
     primary,
+    age,
   } = user;
   try {
     if (users.find((user) => user.email === email)) {
       throw new GraphQLError(UserErrorMessage.ALREADY_EXISTS);
     }
-    const userId = Math.floor(Math.random() * 10000000);
+    const userId = Math.floor(Math.random() * 10000000).toString();
 
     const newUser = {
       userId,
@@ -74,6 +75,7 @@ export const createUserResolver = (_root, args) => {
       password,
       firstName,
       lastName,
+      age,
     };
 
     createAddressResolver(false, false, null, {
@@ -98,8 +100,8 @@ export const createUserResolver = (_root, args) => {
 
 export const editUserResolver = (_root, args) => {
   try {
-    const { email, firstName, lastName, age, userId } = args;
-
+    const { user } = args;
+    const { email, firstName, lastName, age, userId } = user;
     const foundIndex = users.findIndex((user) => user.userId === userId);
     if (foundIndex === -1) throw new GraphQLError(UserErrorMessage.NOT_FOUND);
     users[foundIndex] = {

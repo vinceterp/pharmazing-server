@@ -1,7 +1,7 @@
 import { Address } from "./types.js";
 import _ from "lodash";
-import { createAddressResolver } from "./resolvers.js";
-import { CreateAddressInputType } from "./types.js";
+import { createAddressResolver, editAddressResolver } from "./resolvers.js";
+import { CreateAddressInputType, EditAddressInput } from "./types.js";
 import { GraphQLNonNull, GraphQLString } from "graphql";
 
 const createAddress = {
@@ -13,7 +13,16 @@ const createAddress = {
   resolve: (parent, args) => createAddressResolver(true, true, parent, args),
 };
 
-const mutations = _.merge({ createAddress });
+const editAddress = {
+  type: Address,
+  args: {
+    userId: { type: new GraphQLNonNull(GraphQLString) },
+    address: { type: EditAddressInput },
+  },
+  resolve: editAddressResolver,
+};
+
+const mutations = _.merge({ createAddress }, { editAddress });
 
 export const addressMutations = {
   name: "Mutation",

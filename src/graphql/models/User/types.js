@@ -35,6 +35,7 @@ export const CreateUserInputType = new GraphQLInputObjectType({
     password: { type: new GraphQLNonNull(GraphQLString) },
     firstName: { type: new GraphQLNonNull(GraphQLString) },
     lastName: { type: new GraphQLNonNull(GraphQLString) },
+    age: { type: GraphQLInt },
     addressLine1: { type: GraphQLString },
     addressLine2: { type: GraphQLString },
     city: { type: GraphQLString },
