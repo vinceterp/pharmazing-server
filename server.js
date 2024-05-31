@@ -5,6 +5,9 @@ import path from "path";
 import { createYoga } from "graphql-yoga";
 import dotenv from "dotenv";
 import { fileURLToPath } from "url";
+import passport from "passport";
+import session from "express-session";
+import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 
 const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
 const __dirname = path.dirname(__filename); // get the name of the directory
@@ -13,14 +16,71 @@ const __dirname = path.dirname(__filename); // get the name of the directory
 dotenv.config();
 
 const PORT = process.env.PORT || 5100;
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
+
+passport.serializeUser((user, done) => {
+  done(null, user);
+});
+
+passport.deserializeUser((obj, done) => {
+  done(null, obj);
+});
+
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: GOOGLE_CLIENT_ID,
+      clientSecret: GOOGLE_CLIENT_SECRET,
+      callbackURL: `http://localhost:${PORT}/auth/google/callback`,
+    },
+    (_accessToken, _refreshToken, profile, cb) => {
+      return cb(null, {
+        id: "1",
+        username: "foo@bar.baz",
+        googleId: profile.id,
+      });
+    },
+  ),
+);
+
+function isAuthenticated(req, res, next) {
+  return req.isAuthenticated() ? next() : res.redirect("/auth/google");
+}
 
 const app = express();
+app.use(
+  session({
+    secret: "sauce",
+    resave: false,
+    saveUninitialized: false,
+  }),
+);
+app.use(passport.initialize());
+app.use(passport.session());
+app.get("/auth/fail", (req, res) => {
+  res.json({ loginFailed: true });
+});
+
+app.get(
+  "/auth/google",
+  passport.authenticate("google", { scope: ["profile"] }),
+);
+
+app.get(
+  "/auth/google/callback",
+  passport.authenticate("google", { failureRedirect: "/auth/fail" }),
+  (req, res) => {
+    res.redirect("/graphql");
+  },
+);
 
 const gqlServer = createYoga({
   schema,
 });
+app.use;
 
-app.use("/graphql", gqlServer);
+app.use("/graphql", isAuthenticated, gqlServer);
 
 app.use("/media", express.static(path.join(__dirname, "public")));
 

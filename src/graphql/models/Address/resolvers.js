@@ -3,7 +3,7 @@ import { AddressErrorMessage, UserErrorMessage } from "../../../utils/enums.js";
 import { users } from "../User/resolvers.js";
 import _ from "lodash";
 
-const addresses = [
+let addresses = [
   {
     userId: "1234567890",
     addressId: "1",
@@ -118,6 +118,25 @@ export const editAddressResolver = (_root, args) => {
       zip: zip || addresses[addressIndex].zip,
     };
     return { ...addresses[addressIndex] };
+  } catch (e) {
+    return e;
+  }
+};
+
+export const deleteAddressResolver = (_root, args) => {
+  try {
+    const { userId, addressId } = args;
+    const userAddresses = addresses.filter(
+      (address) => address.userId === userId,
+    );
+    if (!userAddresses.length)
+      throw new GraphQLError(AddressErrorMessage.NOT_FOUND);
+    const addressIndex = addresses.find(
+      (address) => address.addressId === addressId,
+    );
+    if (!addressIndex) throw new GraphQLError(AddressErrorMessage.NOT_FOUND);
+    addresses = addresses.filter((address) => address.addressId !== addressId);
+    return addressIndex;
   } catch (e) {
     return e;
   }
