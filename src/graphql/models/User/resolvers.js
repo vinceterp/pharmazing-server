@@ -38,7 +38,7 @@ export const signInResolver = (_root, args) => {
   }
 };
 
-export const getAllUsersResolver = (_root, _args) => {
+export const getAllUsersResolver = (_root, _args, context) => {
   try {
     if (!users) throw new GraphQLError(UserErrorMessage.NOT_FOUND);
     return users;

@@ -7,6 +7,8 @@ import dotenv from "dotenv";
 import { fileURLToPath } from "url";
 import passport from "passport";
 import session from "express-session";
+import cors from "cors";
+// import helmet from "helmet";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 
 const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
@@ -44,11 +46,23 @@ passport.use(
   ),
 );
 
+function isValidToken(token) {
+  return typeof token === "string" ? token.includes("Bearer") : !!token;
+}
+
 function isAuthenticated(req, res, next) {
-  return req.isAuthenticated() ? next() : res.redirect("/auth/google");
+  const proceed = isValidToken(req.headers.authorization);
+  //check here if the token is valid
+  // console.log(req.headers.authorization);
+  // i can chcek here for the requests that already have an access token and add the session or user to the request with a db call
+  return req.isAuthenticated() || proceed
+    ? next()
+    : res.redirect("/auth/google");
 }
 
 const app = express();
+app.use(cors());
+// app.use(helmet());
 app.use(
   session({
     secret: "sauce",
@@ -74,6 +88,11 @@ app.get(
     res.redirect("/graphql");
   },
 );
+
+app.use("/logout", (req, res) => {
+  req.logOut(() => console.log("logged out"));
+  res.redirect("/graphql");
+});
 
 const gqlServer = createYoga({
   schema,
