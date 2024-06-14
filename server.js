@@ -46,19 +46,20 @@ passport.use(
   ),
 );
 
-function isValidToken(token) {
-  return typeof token === "string" ? token.includes("Bearer") : !!token;
-}
+// function isValidToken(token) {
+//   return typeof token === "string" ? token.includes("Bearer") : !!token;
+// }
 
-function isAuthenticated(req, res, next) {
-  const proceed = isValidToken(req.headers.authorization);
-  //check here if the token is valid
-  // console.log(req.headers.authorization);
-  // i can chcek here for the requests that already have an access token and add the session or user to the request with a db call
-  return req.isAuthenticated() || proceed
-    ? next()
-    : res.redirect("/auth/google");
-}
+// function isAuthenticated(req, res, next) {
+//   // console.log(req);
+//   const proceed = isValidToken(req.headers.authorization);
+//   //check here if the token is valid
+//   // console.log(req.headers.authorization);
+//   // i can chcek here for the requests that already have an access token and add the session or user to the request with a db call
+//   return req.isAuthenticated() || proceed
+//     ? next()
+//     : res.redirect("/auth/google");
+// }
 
 const app = express();
 app.use(cors());
@@ -90,8 +91,12 @@ app.get(
 );
 
 app.use("/logout", (req, res) => {
-  req.logOut(() => console.log("logged out"));
-  res.redirect("/graphql");
+  req.session.destroy((err) => {
+    if (!err) {
+      console.log("logged out");
+      res.redirect("/graphql");
+    }
+  });
 });
 
 const gqlServer = createYoga({
@@ -99,7 +104,7 @@ const gqlServer = createYoga({
 });
 app.use;
 
-app.use("/graphql", isAuthenticated, gqlServer);
+app.use("/graphql", gqlServer);
 
 app.use("/media", express.static(path.join(__dirname, "public")));
 
