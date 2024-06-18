@@ -2,6 +2,7 @@
 import { GraphQLError } from "graphql";
 import { UserErrorMessage } from "../../../utils/enums.js";
 import { createAddressResolver } from "../Address/resolvers.js";
+import { verify } from "../../../utils/verify.js";
 
 export let users = [
   {
@@ -21,18 +22,33 @@ export let users = [
   },
 ];
 
-export const signInResolver = (_root, args) => {
+export const signInResolver = async (_root, args, context) => {
   const { email, password } = args;
   try {
-    const user = users.find(
-      (user) => user.email === email && user.password === password,
-    );
+    console.log("context", context.req.headers.authorization);
+    const idToken = context.req.headers.authorization.split(" ")[1];
+    // console.log(context.req.headers.authorization);
+    const result = await verify(idToken);
+
+    if (email && password) {
+      const user = users.find(
+        (user) => user.email === email && user.password === password,
+      );
+      if (!user) {
+        throw new GraphQLError(UserErrorMessage.NOT_FOUND);
+      }
+      const token = "1234567890";
+      user.token = token;
+      return user;
+    }
+    console.log("result", result);
+    const user = users.find((user) => user.userId === result?.sub);
+    console.log("user", user);
     if (!user) {
       throw new GraphQLError(UserErrorMessage.NOT_FOUND);
     }
-    const token = "1234567890";
-    user.token = token;
     return user;
+    // const token
   } catch (e) {
     return e;
   }
@@ -40,6 +56,7 @@ export const signInResolver = (_root, args) => {
 
 export const getAllUsersResolver = (_root, _args, context) => {
   try {
+    // console.log(context);
     if (!users) throw new GraphQLError(UserErrorMessage.NOT_FOUND);
     return users;
   } catch (e) {
@@ -47,7 +64,7 @@ export const getAllUsersResolver = (_root, _args, context) => {
   }
 };
 
-export const createUserResolver = (_root, args) => {
+export const createUserResolver = async (_root, args, context) => {
   const { user } = args;
   const {
     email,
@@ -64,11 +81,15 @@ export const createUserResolver = (_root, args) => {
     age,
   } = user;
   try {
+    const idToken = context.req.headers.authorization.split(" ")[1];
+    console.log(context.req.headers.authorization);
+    const result = await verify(idToken);
     if (users.find((user) => user.email === email)) {
       throw new GraphQLError(UserErrorMessage.ALREADY_EXISTS);
     }
-    const userId = Math.floor(Math.random() * 10000000).toString();
-
+    const userId =
+      result?.sub || Math.floor(Math.random() * 10000000).toString();
+    console.log("userId", userId);
     const newUser = {
       userId,
       email,
@@ -90,6 +111,7 @@ export const createUserResolver = (_root, args) => {
         primary: primary || false,
       },
     });
+    console.log("newUser", newUser);
     // call the createAddress resolver here with the extra address data from the parameters
     users.push(newUser);
     return newUser;

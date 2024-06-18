@@ -62,7 +62,11 @@ passport.use(
 // }
 
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    credentials: true,
+  }),
+);
 // app.use(helmet());
 app.use(
   session({
@@ -101,6 +105,7 @@ app.use("/logout", (req, res) => {
 
 const gqlServer = createYoga({
   schema,
+  // context: (req) => ({...req, user: {data: "my cystom dstas"}}),
 });
 app.use;
 

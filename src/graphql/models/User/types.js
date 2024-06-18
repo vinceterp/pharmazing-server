@@ -32,7 +32,7 @@ export const CreateUserInputType = new GraphQLInputObjectType({
   name: "CreateUserInput",
   fields: {
     email: { type: new GraphQLNonNull(GraphQLString) },
-    password: { type: new GraphQLNonNull(GraphQLString) },
+    password: { type: GraphQLString },
     firstName: { type: new GraphQLNonNull(GraphQLString) },
     lastName: { type: new GraphQLNonNull(GraphQLString) },
     age: { type: GraphQLInt },

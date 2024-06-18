@@ -1,13 +1,13 @@
 import { User } from "./types.js";
-import { GraphQLString, GraphQLNonNull, GraphQLList } from "graphql";
+import { GraphQLString, GraphQLList } from "graphql";
 import { signInResolver, getAllUsersResolver } from "./resolvers.js";
 import _ from "lodash";
 
 const signIn = {
   type: User,
   args: {
-    email: { type: new GraphQLNonNull(GraphQLString) },
-    password: { type: new GraphQLNonNull(GraphQLString) },
+    email: { type: GraphQLString },
+    password: { type: GraphQLString },
   },
   resolve: signInResolver,
 };
