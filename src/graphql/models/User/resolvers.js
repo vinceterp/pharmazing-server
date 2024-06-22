@@ -81,8 +81,10 @@ export const createUserResolver = async (_root, args, context) => {
     const idToken = context.req.headers.authorization.split(" ")[1];
 
     const result = await verify(idToken);
-    if (users.find((user) => user.email === email)) {
-      throw new GraphQLError(UserErrorMessage.ALREADY_EXISTS);
+    const currUser = users.find((user) => user.userId === result?.sub);
+    if (currUser) {
+      // throw new GraphQLError(UserErrorMessage.ALREADY_EXISTS);
+      return currUser;
     }
     const userId =
       result?.sub || Math.floor(Math.random() * 10000000).toString();

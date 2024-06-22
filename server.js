@@ -64,6 +64,7 @@ passport.use(
 const app = express();
 app.use(
   cors({
+    origin: process.env.CLIENT_URL,
     credentials: true,
   }),
 );
@@ -109,7 +110,7 @@ const gqlServer = createYoga({
 });
 app.use;
 
-app.use("/graphql", gqlServer);
+app.use("/graphql", (req, res) => {req.setTimeout(500000); gqlServer(req, res)});
 
 app.use("/media", express.static(path.join(__dirname, "public")));
 
