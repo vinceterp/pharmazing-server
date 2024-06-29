@@ -31,6 +31,9 @@
     "google-auth-library": "^9.11.0",
     "graphql": "^16.8.1",
     "graphql-yoga": "^5.3.1",
+    "mongodb": "^6.7.0",
+    "mongoose": "^8.4.4",
+    "nanoid": "^5.0.7",
     "passport": "0.5",
     "passport-google-oauth20": "^2.0.0"
   }

@@ -8,7 +8,7 @@ import { fileURLToPath } from "url";
 import passport from "passport";
 import session from "express-session";
 import cors from "cors";
-// import helmet from "helmet";
+import connectDB from "./src/db/config/config.js";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 
 const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
@@ -16,6 +16,8 @@ const __dirname = path.dirname(__filename); // get the name of the directory
 
 //setup env variables
 dotenv.config();
+
+await connectDB();
 
 const PORT = process.env.PORT || 5100;
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
@@ -106,11 +108,13 @@ app.use("/logout", (req, res) => {
 
 const gqlServer = createYoga({
   schema,
-  // context: (req) => ({...req, user: {data: "my cystom dstas"}}),
 });
 app.use;
 
-app.use("/graphql", (req, res) => {req.setTimeout(500000); gqlServer(req, res)});
+app.use("/graphql", (req, res) => {
+  req.setTimeout(500000);
+  gqlServer(req, res);
+});
 
 app.use("/media", express.static(path.join(__dirname, "public")));
 

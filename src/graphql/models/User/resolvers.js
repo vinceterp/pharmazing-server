@@ -3,6 +3,7 @@ import { GraphQLError } from "graphql";
 import { UserErrorMessage } from "../../../utils/enums.js";
 import { createAddressResolver } from "../Address/resolvers.js";
 import { verify } from "../../../utils/verify.js";
+import { User } from "../../../db/models/User.js";
 
 export let users = [
   {
@@ -52,8 +53,12 @@ export const signInResolver = async (_root, args, context) => {
   }
 };
 
-export const getAllUsersResolver = (_root, _args, context) => {
+export const getAllUsersResolver = async (_root, _args, context) => {
   try {
+    const newUser = new User({ ...users[0] });
+    await newUser.save();
+    const result = await User.find();
+    console.log(result);
     if (!users) throw new GraphQLError(UserErrorMessage.NOT_FOUND);
     return users;
   } catch (e) {
