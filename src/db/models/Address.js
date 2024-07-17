@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { nanoid } from "nanoid";
 
 const addressSchema = new mongoose.Schema(
   {
@@ -17,7 +18,7 @@ const addressSchema = new mongoose.Schema(
       default: false,
       required: true,
     },
-    addressaLine1: {
+    addressLine1: {
       type: String,
       required: true,
     },

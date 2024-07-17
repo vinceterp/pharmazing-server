@@ -5,49 +5,60 @@ import { createAddressResolver } from "../Address/resolvers.js";
 import { verify } from "../../../utils/verify.js";
 import { User } from "../../../db/models/User.js";
 
-export let users = [
-  {
-    userId: "1234567890",
-    email: "me@me.com",
-    password: "password",
-    firstName: "John",
-    lastName: "Doe",
-    age: 22,
-  },
-  {
-    userId: "1234560",
-    email: "me2@me.com",
-    password: "password",
-    firstName: "Jane",
-    lastName: "Doe",
-  },
-];
+// export let users = [
+//   {
+//     userId: "1234567890",
+//     email: "me@me.com",
+//     password: "password",
+//     firstName: "John",
+//     lastName: "Doe",
+//     age: 22,
+//   },
+//   {
+//     userId: "1234560",
+//     email: "me2@me.com",
+//     password: "password",
+//     firstName: "Jane",
+//     lastName: "Doe",
+//   },
+// ];
 
 export const signInResolver = async (_root, args, context) => {
   const { email, password } = args;
   try {
-    const idToken = context.req.headers.authorization.split(" ")[1];
+    // const users = await User.find();
+    const idToken = context.req.headers.authorization?.split(" ")[1];
 
     const result = await verify(idToken);
 
     if (email && password) {
-      const user = users.find(
-        (user) => user.email === email && user.password === password,
-      );
+      const [user] = await User.find({
+        email,
+        password,
+      });
+      // console.log("user", user);
       if (!user) {
         throw new GraphQLError(UserErrorMessage.NOT_FOUND);
       }
       const token = "1234567890";
-      user.token = token;
-      return user;
+      const { firstName, lastName, age, userId } = user;
+      // user.token = token;
+      return { firstName, lastName, userId, age, email, token };
     }
 
-    const user = users.find((user) => user.userId === result?.sub);
-
+    const [user] = await User.find({ userId: result?.sub });
     if (!user) {
       throw new GraphQLError(UserErrorMessage.NOT_FOUND);
     }
-    return user;
+    const { firstName, lastName, age, userId, email: userEmail } = user;
+    return {
+      firstName,
+      lastName,
+      userId,
+      age,
+      email: userEmail,
+      token: idToken,
+    };
   } catch (e) {
     return e;
   }
@@ -55,11 +66,9 @@ export const signInResolver = async (_root, args, context) => {
 
 export const getAllUsersResolver = async (_root, _args, context) => {
   try {
-    const newUser = new User({ ...users[0] });
-    await newUser.save();
-    const result = await User.find();
-    console.log(result);
-    if (!users) throw new GraphQLError(UserErrorMessage.NOT_FOUND);
+    const users = await User.find();
+
+    if (!users.length) throw new GraphQLError(UserErrorMessage.NOT_FOUND);
     return users;
   } catch (e) {
     return e;
@@ -73,70 +82,81 @@ export const createUserResolver = async (_root, args, context) => {
     password,
     firstName,
     lastName,
-    addressLine1,
-    addressLine2,
-    city,
-    parish,
-    country,
-    zip,
-    primary,
+    // addressLine1,
+    // addressLine2,
+    // city,
+    // parish,
+    // country,
+    // zip,
+    // primary,
     age,
   } = user;
   try {
-    const idToken = context.req.headers.authorization.split(" ")[1];
+    const idToken = context.req.headers.authorization?.split(" ")[1];
 
     const result = await verify(idToken);
-    const currUser = users.find((user) => user.userId === result?.sub);
+    console.log("result", result);
+
+    const [currUser] = await User.find({ userId: result?.sub });
+    console.log("currUser", currUser);
     if (currUser) {
+      console.log("gothere");
       // throw new GraphQLError(UserErrorMessage.ALREADY_EXISTS);
       return currUser;
     }
+    // const currUser = users.find((user) => user.userId === result?.sub);
     const userId =
       result?.sub || Math.floor(Math.random() * 10000000).toString();
-
-    const newUser = {
+    console.log("userId", userId);
+    const newUser = new User({
       userId,
       email,
       password,
       firstName,
       lastName,
       age,
-    };
-
-    createAddressResolver(false, false, null, {
-      userId,
-      address: {
-        addressLine1: addressLine1 || "",
-        addressLine2: addressLine2 || "",
-        city: city || "",
-        parish: parish || "",
-        country: country || "",
-        zip: zip || "",
-        primary: primary || false,
-      },
     });
+
+    // createAddressResolver(false, false, null, {
+    //   userId,
+    //   address: {
+    //     addressLine1: addressLine1 || "",
+    //     addressLine2: addressLine2 || "",
+    //     city: city || "",
+    //     parish: parish || "",
+    //     country: country || "",
+    //     zip: zip || "",
+    //     primary: primary || false,
+    //   },
+    // });
     // call the createAddress resolver here with the extra address data from the parameters
-    users.push(newUser);
+    await newUser.save({ safe: true });
+    console.log("newUser", newUser);
     return newUser;
   } catch (e) {
+    console.log("error", e?.message);
     return e;
   }
 };
 
-export const editUserResolver = (_root, args) => {
+export const editUserResolver = async (_root, args) => {
   try {
     const { user } = args;
     const { email, firstName, lastName, age, userId } = user;
-    const foundIndex = users.findIndex((user) => user.userId === userId);
-    if (foundIndex === -1) throw new GraphQLError(UserErrorMessage.NOT_FOUND);
-    users[foundIndex] = {
-      ...users[foundIndex],
-      firstName: firstName || users[foundIndex].firstName,
-      lastName: lastName || users[foundIndex].lastName,
-      email: email || users[foundIndex].email,
-      age: age || users[foundIndex].age,
+    const [foundUser] = await User.find({ userId });
+    if (!foundUser) throw new GraphQLError(UserErrorMessage.NOT_FOUND);
+    foundUser.email = email || foundUser.email;
+    foundUser.firstName = firstName || foundUser.firstName;
+    foundUser.lastName = lastName || foundUser.lastName;
+    foundUser.age = age || foundUser.age;
+    await foundUser.save();
+    return {
+      firstName: foundUser.firstName,
+      lastName: foundUser.lastName,
+      userId: foundUser.userId,
+      age: foundUser.age,
+      email: foundUser.email,
     };
-    return { ...users[foundIndex] };
   } catch (e) {
     return e;
   }

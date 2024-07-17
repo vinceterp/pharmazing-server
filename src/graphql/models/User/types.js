@@ -6,7 +6,7 @@ import {
   GraphQLList,
   GraphQLNonNull,
   GraphQLInputObjectType,
-  GraphQLBoolean,
+  // GraphQLBoolean,
 } from "graphql";
 import { addressFieldResolver } from "../Address/resolvers.js";
 import { Address } from "../Address/types.js";
@@ -36,13 +36,17 @@ export const CreateUserInputType = new GraphQLInputObjectType({
     firstName: { type: new GraphQLNonNull(GraphQLString) },
     lastName: { type: new GraphQLNonNull(GraphQLString) },
     age: { type: GraphQLInt },
-    addressLine1: { type: GraphQLString },
-    addressLine2: { type: GraphQLString },
-    city: { type: GraphQLString },
-    parish: { type: GraphQLString },
-    country: { type: GraphQLString },
-    zip: { type: GraphQLString },
-    primary: { type: GraphQLBoolean },
+    // address: {
+    //   type: new GraphQLList(new GraphQLNonNull(Address)),
+    //   // resolve: addressFieldResolver,
+    // },
+    // addressLine1: { type: GraphQLString },
+    // addressLine2: { type: GraphQLString },
+    // city: { type: GraphQLString },
+    // parish: { type: GraphQLString },
+    // country: { type: GraphQLString },
+    // zip: { type: GraphQLString },
+    // primary: { type: GraphQLBoolean },
   },
 });
 

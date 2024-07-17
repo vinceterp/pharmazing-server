@@ -1,7 +1,8 @@
 import { GraphQLError } from "graphql";
 import { AddressErrorMessage, UserErrorMessage } from "../../../utils/enums.js";
-import { users } from "../User/resolvers.js";
 import _ from "lodash";
+
+import { Address } from "../../../db/models/Address.js";
 
 let addresses = [
   {
@@ -27,8 +28,10 @@ let addresses = [
   },
 ];
 
-export const addressQueryResolver = (checkAddress, _parent, args) => {
+export const addressQueryResolver = async (checkAddress, _parent, args) => {
   try {
+    const mongoaddy = await Address.find();
+    console.log("mongoaddy", mongoaddy);
     const { userId } = args;
     const userAddresses = addresses.filter(
       (address) => address.userId === userId,
@@ -55,7 +58,7 @@ export const addressFieldResolver = (parent) => {
   }
 };
 
-export const createAddressResolver = (
+export const createAddressResolver = async (
   checkAddress,
   checkUserId,
   _parent,
@@ -63,10 +66,12 @@ export const createAddressResolver = (
 ) => {
   try {
     const { userId, address } = args;
-    const userFound = users.findIndex((user) => user.userId === userId);
+    const userFound = await User.find({ userId });
     if (userFound === -1 && checkUserId)
       throw new GraphQLError(UserErrorMessage.NOT_FOUND);
-    const userAddresses = addressQueryResolver(checkAddress, null, { userId });
+    const userAddresses = await addressQueryResolver(checkAddress, null, {
+      userId,
+    });
     userAddresses.forEach((userAddress) => {
       const { addressId, ...rest } = userAddress;
       if (_.isEqual(rest, { userId, ...address })) {
@@ -80,7 +85,7 @@ export const createAddressResolver = (
       addressId,
       ...address,
     };
-    addresses.push(newAddress);
+    Address.save(new Address(newAddress));
     return newAddress;
   } catch (e) {
     return e;
