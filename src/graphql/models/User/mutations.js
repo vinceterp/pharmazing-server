@@ -10,6 +10,7 @@ import {
   DeleteUserInputType,
 } from "./types.js";
 import _ from "lodash";
+import { DeleteAddressResult } from "../Address/types.js";
 
 const createUser = {
   type: User,
@@ -24,7 +25,7 @@ const editUser = {
 };
 
 const deleteUser = {
-  type: User,
+  type: DeleteAddressResult,
   args: { user: { type: DeleteUserInputType } },
   resolve: deleteUserResolver,
 };

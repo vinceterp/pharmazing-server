@@ -48,3 +48,10 @@ export const EditAddressInput = new GraphQLInputObjectType({
     country: { type: GraphQLString },
   },
 });
+
+export const DeleteAddressResult = new GraphQLObjectType({
+  name: "DeleteAddressResult",
+  fields: {
+    success: { type: new GraphQLNonNull(GraphQLBoolean) },
+  },
+});

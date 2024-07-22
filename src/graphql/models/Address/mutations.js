@@ -1,4 +1,4 @@
-import { Address } from "./types.js";
+import { Address, DeleteAddressResult } from "./types.js";
 import _ from "lodash";
 import {
   createAddressResolver,
@@ -27,7 +27,7 @@ const editAddress = {
 };
 
 const deleteAddress = {
-  type: Address,
+  type: DeleteAddressResult,
   args: {
     userId: { type: new GraphQLNonNull(GraphQLString) },
     addressId: { type: new GraphQLNonNull(GraphQLString) },

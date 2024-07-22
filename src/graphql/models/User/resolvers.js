@@ -1,32 +1,13 @@
 /* eslint-disable no-unused-vars */
 import { GraphQLError } from "graphql";
 import { UserErrorMessage } from "../../../utils/enums.js";
-import { createAddressResolver } from "../Address/resolvers.js";
+// import { createAddressResolver } from "../Address/resolvers.js";
 import { verify } from "../../../utils/verify.js";
 import { User } from "../../../db/models/User.js";
-
-// export let users = [
-//   {
-//     userId: "1234567890",
-//     email: "me@me.com",
-//     password: "password",
-//     firstName: "John",
-//     lastName: "Doe",
-//     age: 22,
-//   },
-//   {
-//     userId: "1234560",
-//     email: "me2@me.com",
-//     password: "password",
-//     firstName: "Jane",
-//     lastName: "Doe",
-//   },
-// ];
 
 export const signInResolver = async (_root, args, context) => {
   const { email, password } = args;
   try {
-    // const users = await User.find();
     const idToken = context.req.headers.authorization?.split(" ")[1];
 
     const result = await verify(idToken);
@@ -36,7 +17,6 @@ export const signInResolver = async (_root, args, context) => {
         email,
         password,
       });
-      // console.log("user", user);
       if (!user) {
         throw new GraphQLError(UserErrorMessage.NOT_FOUND);
       }
@@ -95,19 +75,13 @@ export const createUserResolver = async (_root, args, context) => {
     const idToken = context.req.headers.authorization?.split(" ")[1];
 
     const result = await verify(idToken);
-    console.log("result", result);
 
     const [currUser] = await User.find({ userId: result?.sub });
-    console.log("currUser", currUser);
     if (currUser) {
-      console.log("gothere");
-      // throw new GraphQLError(UserErrorMessage.ALREADY_EXISTS);
       return currUser;
     }
-    // const currUser = users.find((user) => user.userId === result?.sub);
     const userId =
       result?.sub || Math.floor(Math.random() * 10000000).toString();
-    console.log("userId", userId);
     const newUser = new User({
       userId,
       email,
@@ -131,10 +105,8 @@ export const createUserResolver = async (_root, args, context) => {
     // });
     // call the createAddress resolver here with the extra address data from the parameters
     await newUser.save({ safe: true });
-    console.log("newUser", newUser);
     return newUser;
   } catch (e) {
-    console.log("error", e?.message);
     return e;
   }
 };
@@ -162,17 +134,16 @@ export const editUserResolver = async (_root, args) => {
   }
 };
 
-export const deleteUserResolver = (_root, args) => {
+export const deleteUserResolver = async (_root, args) => {
   try {
     const { user } = args;
     const { userId, password } = user;
-    const foundIndex = users.findIndex(
-      (user) => user.userId === userId && user.password === password,
-    );
-    if (foundIndex === -1) throw new GraphQLError(UserErrorMessage.NOT_FOUND);
-    const deletedUser = users[foundIndex];
-    users = users.filter((user) => user.userId !== deletedUser.userId);
-    return { error: null, ...deletedUser };
+    const foundUser = await User.findOne({ userId });
+    if (!foundUser) throw new GraphQLError(UserErrorMessage.NOT_FOUND);
+    const { deletedCount, acknowledged } = await foundUser.deleteOne();
+    return {
+      success: deletedCount > 0 || acknowledged,
+    };
   } catch (e) {
     return e;
   }

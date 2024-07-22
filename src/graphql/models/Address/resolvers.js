@@ -3,39 +3,12 @@ import { AddressErrorMessage, UserErrorMessage } from "../../../utils/enums.js";
 import _ from "lodash";
 
 import { Address } from "../../../db/models/Address.js";
-
-let addresses = [
-  {
-    userId: "1234567890",
-    addressId: "1",
-    primary: true,
-    addressLine1: "123 Main Street",
-    addressLine2: "Apt 1",
-    city: "Kingston",
-    parish: "St. Andrew",
-    country: "Jamaica",
-    zip: "12345",
-  },
-  {
-    userId: "1234560",
-    addressId: "2",
-    primary: true,
-    addressLine1: "123 Master Street",
-    city: "St. James",
-    parish: "St. Andrew",
-    country: "Jamaica",
-    zip: "12325",
-  },
-];
+import { User } from "../../../db/models/User.js";
 
 export const addressQueryResolver = async (checkAddress, _parent, args) => {
   try {
-    const mongoaddy = await Address.find();
-    console.log("mongoaddy", mongoaddy);
     const { userId } = args;
-    const userAddresses = addresses.filter(
-      (address) => address.userId === userId,
-    );
+    const userAddresses = await Address.find({ userId });
     if (!userAddresses.length && checkAddress)
       throw new GraphQLError(AddressErrorMessage.NOT_FOUND);
     return userAddresses;
@@ -44,12 +17,10 @@ export const addressQueryResolver = async (checkAddress, _parent, args) => {
   }
 };
 
-export const addressFieldResolver = (parent) => {
+export const addressFieldResolver = async (parent) => {
   try {
     const { userId } = parent;
-    const userAddresses = addresses.filter(
-      (address) => address.userId === userId,
-    );
+    const userAddresses = await Address.find({ userId });
     if (!userAddresses.length)
       throw new GraphQLError(AddressErrorMessage.NOT_FOUND);
     return userAddresses;
@@ -66,33 +37,35 @@ export const createAddressResolver = async (
 ) => {
   try {
     const { userId, address } = args;
-    const userFound = await User.find({ userId });
-    if (userFound === -1 && checkUserId)
+    const [userFound] = await User.find({ userId });
+    if (!userFound && checkUserId)
       throw new GraphQLError(UserErrorMessage.NOT_FOUND);
     const userAddresses = await addressQueryResolver(checkAddress, null, {
       userId,
     });
-    userAddresses.forEach((userAddress) => {
-      const { addressId, ...rest } = userAddress;
-      if (_.isEqual(rest, { userId, ...address })) {
-        throw new GraphQLError(AddressErrorMessage.ALREADY_EXISTS);
-      }
-    });
+    _.isArray(userAddresses) &&
+      userAddresses?.forEach((userAddress) => {
+        const { addressId, __v, _id, createdAt, updatedAt, ...rest } =
+          userAddress.toObject();
+        if (_.isEqual(rest, { userId, ...address })) {
+          throw new GraphQLError(AddressErrorMessage.ALREADY_EXISTS);
+        }
+      });
     //if primary is true, set all other addresses primary to false
     const addressId = Math.floor(Math.random() * 10000000).toString();
-    const newAddress = {
+    const newAddress = new Address({
       userId,
       addressId,
       ...address,
-    };
-    Address.save(new Address(newAddress));
+    });
+    await newAddress.save({ safe: true });
     return newAddress;
   } catch (e) {
     return e;
   }
 };
 
-export const editAddressResolver = (_root, args) => {
+export const editAddressResolver = async (_root, args) => {
   try {
     const { userId, address } = args;
     const {
@@ -105,43 +78,30 @@ export const editAddressResolver = (_root, args) => {
       country,
       zip,
     } = address;
-    if (!addresses.length)
-      throw new GraphQLError(AddressErrorMessage.NOT_FOUND);
-    const addressIndex = addresses.findIndex(
-      (address) => address.addressId === addressId,
-    );
-    if (addressIndex === -1)
-      throw new GraphQLError(AddressErrorMessage.NOT_FOUND);
-    addresses[addressIndex] = {
-      ...addresses[addressIndex],
-      addressLine1: addressLine1 || addresses[addressIndex].addressLine1,
-      addressLine2: addressLine2 || addresses[addressIndex].addressLine2,
-      primary: primary || addresses[addressIndex].primary,
-      city: city || addresses[addressIndex].city,
-      parish: parish || addresses[addressIndex].parish,
-      country: country || addresses[addressIndex].country,
-      zip: zip || addresses[addressIndex].zip,
-    };
-    return { ...addresses[addressIndex] };
+    const [addressIndex] = await Address.find({ addressId });
+    if (!addressIndex) throw new GraphQLError(AddressErrorMessage.NOT_FOUND);
+    addressIndex.addressLine1 = addressLine1 || addressIndex.addressLine1;
+    addressIndex.addressLine2 = addressLine2 || addressIndex.addressLine2;
+    addressIndex.primary = primary || addressIndex.primary;
+    addressIndex.city = city || addressIndex.city;
+    addressIndex.parish = parish || addressIndex.parish;
+    addressIndex.country = country || addressIndex.country;
+    addressIndex.zip = zip || addressIndex.zip;
+    await addressIndex.save({ safe: true });
+    const { __v, createdAt, updatedAt, _id, ...rest } = addressIndex.toObject();
+    return rest;
   } catch (e) {
     return e;
   }
 };
 
-export const deleteAddressResolver = (_root, args) => {
+export const deleteAddressResolver = async (_root, args) => {
   try {
     const { userId, addressId } = args;
-    const userAddresses = addresses.filter(
-      (address) => address.userId === userId,
-    );
-    if (!userAddresses.length)
-      throw new GraphQLError(AddressErrorMessage.NOT_FOUND);
-    const addressIndex = addresses.find(
-      (address) => address.addressId === addressId,
-    );
-    if (!addressIndex) throw new GraphQLError(AddressErrorMessage.NOT_FOUND);
-    addresses = addresses.filter((address) => address.addressId !== addressId);
-    return addressIndex;
+    const addressFound = await Address.findOne({ addressId, userId });
+    if (!addressFound) throw new GraphQLError(AddressErrorMessage.NOT_FOUND);
+    const { deletedCount, acknowledged } = await addressFound.deleteOne();
+    return { success: deletedCount > 0 || acknowledged };
   } catch (e) {
     return e;
   }

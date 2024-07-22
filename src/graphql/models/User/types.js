@@ -78,6 +78,6 @@ export const DeleteUserInputType = new GraphQLInputObjectType({
   name: "DeleteUserInput",
   fields: {
     userId: { type: new GraphQLNonNull(GraphQLString) },
-    password: { type: new GraphQLNonNull(GraphQLString) },
+    password: { type: GraphQLString },
   },
 });
