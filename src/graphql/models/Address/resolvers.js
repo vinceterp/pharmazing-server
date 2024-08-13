@@ -77,6 +77,8 @@ export const editAddressResolver = async (_root, args) => {
       parish,
       country,
       zip,
+      latitude,
+      longitude,
     } = address;
     const [addressIndex] = await Address.find({ addressId });
     if (!addressIndex) throw new GraphQLError(AddressErrorMessage.NOT_FOUND);
@@ -87,6 +89,8 @@ export const editAddressResolver = async (_root, args) => {
     addressIndex.parish = parish || addressIndex.parish;
     addressIndex.country = country || addressIndex.country;
     addressIndex.zip = zip || addressIndex.zip;
+    addressIndex.latitude = latitude || addressIndex.latitude;
+    addressIndex.longitude = longitude || addressIndex.longitude;
     await addressIndex.save({ safe: true });
     const { __v, createdAt, updatedAt, _id, ...rest } = addressIndex.toObject();
     return rest;

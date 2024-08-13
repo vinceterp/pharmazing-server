@@ -5,6 +5,7 @@ import {
   GraphQLBoolean,
   GraphQLInputObjectType,
   GraphQLNonNull,
+  GraphQLFloat,
 } from "graphql";
 
 export const Address = new GraphQLObjectType({
@@ -19,6 +20,8 @@ export const Address = new GraphQLObjectType({
     parish: { type: GraphQLString },
     zip: { type: GraphQLString },
     country: { type: GraphQLString },
+    latitude: { type: GraphQLFloat },
+    longitude: { type: GraphQLFloat },
   },
 });
 
@@ -32,6 +35,8 @@ export const CreateAddressInputType = new GraphQLInputObjectType({
     parish: { type: new GraphQLNonNull(GraphQLString) },
     zip: { type: new GraphQLNonNull(GraphQLString) },
     country: { type: new GraphQLNonNull(GraphQLString) },
+    latitude: { type: new GraphQLNonNull(GraphQLFloat) },
+    longitude: { type: new GraphQLNonNull(GraphQLFloat) },
   },
 });
 
@@ -46,6 +51,8 @@ export const EditAddressInput = new GraphQLInputObjectType({
     parish: { type: GraphQLString },
     zip: { type: GraphQLString },
     country: { type: GraphQLString },
+    latitude: { type: GraphQLFloat },
+    longitude: { type: GraphQLFloat },
   },
 });
 

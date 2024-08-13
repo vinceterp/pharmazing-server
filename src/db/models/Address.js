@@ -41,6 +41,14 @@ const addressSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    latitude: {
+      type: mongoose.Types.Decimal128,
+      required: true,
+    },
+    longitude: {
+      type: mongoose.Types.Decimal128,
+      required: true,
+    },
   },
   { timestamps: true },
 );
