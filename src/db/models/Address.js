@@ -42,11 +42,11 @@ const addressSchema = new mongoose.Schema(
       required: true,
     },
     latitude: {
-      type: mongoose.Types.Decimal128,
+      type: Number,
       required: true,
     },
     longitude: {
-      type: mongoose.Types.Decimal128,
+      type: Number,
       required: true,
     },
   },
