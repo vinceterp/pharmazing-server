@@ -59,7 +59,9 @@ export const createAddressResolver = async (
       ...address,
     });
     await newAddress.save({ safe: true });
-    return newAddress;
+    const { __v, createdAt, updatedAt, _id, __typename, ...rest } =
+      newAddress.toObject();
+    return rest;
   } catch (e) {
     return e;
   }
