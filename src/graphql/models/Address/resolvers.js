@@ -52,10 +52,8 @@ export const createAddressResolver = async (
         }
       });
     //if primary is true, set all other addresses primary to false
-    const addressId = Math.floor(Math.random() * 10000000).toString();
     const newAddress = new Address({
       userId,
-      addressId,
       ...address,
     });
     await newAddress.save({ safe: true });
@@ -82,6 +80,8 @@ export const editAddressResolver = async (_root, args) => {
       latitude,
       longitude,
     } = address;
+    if (!addressId)
+      throw new GraphQLError(AddressErrorMessage.MISSING_ADDRESS_ID);
     const [addressIndex] = await Address.find({ addressId });
     if (!addressIndex) throw new GraphQLError(AddressErrorMessage.NOT_FOUND);
     addressIndex.addressLine1 = addressLine1 || addressIndex.addressLine1;
@@ -103,6 +103,7 @@ export const editAddressResolver = async (_root, args) => {
 
 export const deleteAddressResolver = async (_root, args) => {
   try {
+    // throw new GraphQLError("Not implemented");
     const { userId, addressId } = args;
     const addressFound = await Address.findOne({ addressId, userId });
     if (!addressFound) throw new GraphQLError(AddressErrorMessage.NOT_FOUND);

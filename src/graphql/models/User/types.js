@@ -10,6 +10,8 @@ import {
 } from "graphql";
 import { addressFieldResolver } from "../Address/resolvers.js";
 import { Address } from "../Address/types.js";
+import { Cart } from "../Cart/types.js";
+import { cartFieldResolver } from "../Cart/resolvers.js";
 
 export const User = new GraphQLObjectType({
   name: "User",
@@ -20,10 +22,15 @@ export const User = new GraphQLObjectType({
     email: { type: GraphQLString },
     password: { type: GraphQLString },
     age: { type: GraphQLInt },
+    contactNumber: {
+      type: GraphQLString,
+    },
+    cartId: { type: GraphQLString },
     address: {
       type: new GraphQLList(new GraphQLNonNull(Address)),
       resolve: addressFieldResolver,
     },
+    // cart: { type: Cart, resolve: cartFieldResolver },
     token: { type: GraphQLString },
   },
 });

@@ -27,7 +27,6 @@ const addressSchema = new mongoose.Schema(
     },
     city: {
       type: String,
-      required: true,
     },
     parish: {
       type: String,

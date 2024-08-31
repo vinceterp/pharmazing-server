@@ -6,6 +6,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    cartId: {
+      type: String,
+      required: true,
+    },
     firstName: {
       type: String,
       required: true,
@@ -23,6 +27,9 @@ const userSchema = new mongoose.Schema(
     },
     age: {
       type: Number,
+    },
+    contactNumber: {
+      type: String,
     },
   },
   { timestamps: true },

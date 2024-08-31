@@ -1,9 +1,10 @@
 /* eslint-disable no-unused-vars */
 import { GraphQLError } from "graphql";
 import { UserErrorMessage } from "../../../utils/enums.js";
-// import { createAddressResolver } from "../Address/resolvers.js";
+
 import { verify } from "../../../utils/verify.js";
 import { User } from "../../../db/models/User.js";
+// import { Cart } from "../../../db/models/Cart.js";
 
 export const signInResolver = async (_root, args, context) => {
   const { email, password } = args;
@@ -21,16 +22,33 @@ export const signInResolver = async (_root, args, context) => {
         throw new GraphQLError(UserErrorMessage.NOT_FOUND);
       }
       const token = "1234567890";
-      const { firstName, lastName, age, userId } = user;
+      const { firstName, lastName, age, userId, cartId, contactNumber } = user;
       // user.token = token;
-      return { firstName, lastName, userId, age, email, token };
+      return {
+        firstName,
+        lastName,
+        userId,
+        age,
+        email,
+        token,
+        cartId,
+        contactNumber,
+      };
     }
 
     const [user] = await User.find({ userId: result?.sub });
     if (!user) {
       throw new GraphQLError(UserErrorMessage.NOT_FOUND);
     }
-    const { firstName, lastName, age, userId, email: userEmail } = user;
+    const {
+      firstName,
+      lastName,
+      age,
+      userId,
+      email: userEmail,
+      cartId,
+      contactNumber,
+    } = user;
     return {
       firstName,
       lastName,
@@ -38,6 +56,8 @@ export const signInResolver = async (_root, args, context) => {
       age,
       email: userEmail,
       token: idToken,
+      cartId,
+      contactNumber,
     };
   } catch (e) {
     return e;
@@ -82,6 +102,16 @@ export const createUserResolver = async (_root, args, context) => {
     }
     const userId =
       result?.sub || Math.floor(Math.random() * 10000000).toString();
+    // if its a new user, generate a new userId, generate a new cart object and extract the cartId to put in the user object
+    // const newCart = new Cart({
+    //   userId,
+    //   items: [],
+    //   total: 0,
+    //   subtotal: 0,
+    //   tax: 0,
+    // });
+    // console.log(newCart);
+    // const {cartId} = await newCart.save();
     const newUser = new User({
       userId,
       email,
@@ -89,6 +119,7 @@ export const createUserResolver = async (_root, args, context) => {
       firstName,
       lastName,
       age,
+      cartId: "placwholder",
     });
 
     // createAddressResolver(false, false, null, {

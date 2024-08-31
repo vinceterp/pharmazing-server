@@ -31,7 +31,7 @@ export const CreateAddressInputType = new GraphQLInputObjectType({
     primary: { type: new GraphQLNonNull(GraphQLBoolean) },
     addressLine1: { type: new GraphQLNonNull(GraphQLString) },
     addressLine2: { type: GraphQLString },
-    city: { type: new GraphQLNonNull(GraphQLString) },
+    city: { type: GraphQLString },
     parish: { type: new GraphQLNonNull(GraphQLString) },
     zip: { type: new GraphQLNonNull(GraphQLString) },
     country: { type: new GraphQLNonNull(GraphQLString) },
@@ -43,7 +43,7 @@ export const CreateAddressInputType = new GraphQLInputObjectType({
 export const EditAddressInput = new GraphQLInputObjectType({
   name: "EditAddressInput",
   fields: {
-    addressId: { type: new GraphQLNonNull(GraphQLID) },
+    addressId: { type: GraphQLID },
     primary: { type: GraphQLBoolean },
     addressLine1: { type: GraphQLString },
     addressLine2: { type: GraphQLString },
