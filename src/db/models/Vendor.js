@@ -1,21 +1,18 @@
 import mongoose, { Schema } from "mongoose";
 import { nanoid } from "nanoid";
+import { mediaSchema } from "../common/types.js";
 
 const vendorSchema = new mongoose.Schema(
   {
     vendorId: {
       type: String,
       required: true,
-      default: () => nanoid(8),
+      default: () => nanoid(16),
       index: { unique: true },
     },
     vendorName: {
       type: String,
       required: true,
-    },
-    products: {
-      type: [Schema.Types.ObjectId],
-      ref: "Product",
     },
     contact: {
       type: [String],
@@ -38,7 +35,7 @@ const vendorSchema = new mongoose.Schema(
       }),
     ],
     media: {
-      type: [new Schema({ url: String, alt: String, type: String })],
+      type: [mediaSchema],
       default: [],
     },
   },

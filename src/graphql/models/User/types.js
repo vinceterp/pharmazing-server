@@ -6,12 +6,9 @@ import {
   GraphQLList,
   GraphQLNonNull,
   GraphQLInputObjectType,
-  // GraphQLBoolean,
 } from "graphql";
 import { addressFieldResolver } from "../Address/resolvers.js";
 import { Address } from "../Address/types.js";
-import { Cart } from "../Cart/types.js";
-import { cartFieldResolver } from "../Cart/resolvers.js";
 
 export const User = new GraphQLObjectType({
   name: "User",

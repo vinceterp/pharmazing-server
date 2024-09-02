@@ -1,10 +1,14 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose from "mongoose";
+import { mediaSchema } from "../common/types.js";
+import { nanoid } from "nanoid";
 
 const productSchema = new mongoose.Schema(
   {
     productId: {
       type: String,
       required: true,
+      default: () => nanoid(16),
+      index: { unique: true },
     },
     vendorId: {
       type: String,
@@ -32,7 +36,7 @@ const productSchema = new mongoose.Schema(
       default: false,
     },
     media: {
-      type: [new Schema({ url: String, alt: String, type: "video" | "image" })],
+      type: [mediaSchema],
     },
   },
   { timestamps: true },

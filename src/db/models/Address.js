@@ -10,7 +10,7 @@ const addressSchema = new mongoose.Schema(
     addressId: {
       type: String,
       required: true,
-      default: () => nanoid(8),
+      default: () => nanoid(16),
       index: { unique: true },
     },
     primary: {

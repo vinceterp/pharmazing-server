@@ -3,10 +3,23 @@ import { Address } from "../../../db/models/Address.js";
 import { GraphQLError } from "graphql";
 import { VendorErrorMessage } from "../../../utils/enums.js";
 import { addressFieldResolver } from "../Address/resolvers.js";
+import { Product } from "../../../db/models/Product.js";
 
 export const getAllVendorsResolver = async (_root, _args, _context) => {
   try {
-    const vendors = await Vendor.find();
+    let vendors = await Vendor.find();
+    vendors = vendors.map(async (vendor, i) => {
+      let addresses = await addressFieldResolver({
+        userId: vendor.vendorId,
+      });
+      if (addresses.length > 0) {
+        return {
+          ...vendor.toObject(),
+          location: addresses[0].toObject() || null,
+        };
+      }
+      return vendor;
+    });
     if (!vendors.length) throw new GraphQLError(VendorErrorMessage.NOT_FOUND);
     return vendors;
   } catch (e) {
