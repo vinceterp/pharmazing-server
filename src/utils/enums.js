@@ -39,4 +39,5 @@ export const VendorErrorMessage = Object.freeze({
  */
 export const CartErrorMessage = Object.freeze({
   NOT_FOUND: "cart not found",
+  ALREADY_EXISTS: "cart already exists",
 });

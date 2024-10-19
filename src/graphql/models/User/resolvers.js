@@ -159,6 +159,7 @@ export const editUserResolver = async (_root, args) => {
       userId: foundUser.userId,
       age: foundUser.age,
       email: foundUser.email,
+      cartId: foundUser.cartId || "placeholder",
     };
   } catch (e) {
     return e;
