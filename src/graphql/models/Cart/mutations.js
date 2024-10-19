@@ -1,5 +1,5 @@
-import { createCartResolver } from "./resolvers.js";
-import { Cart, CreateCartInput } from "./types.js";
+import { createCartResolver, editCartResolver } from "./resolvers.js";
+import { Cart, CreateCartInput, EditCartInput } from "./types.js";
 import _ from "lodash";
 
 const createCart = {
@@ -10,8 +10,16 @@ const createCart = {
   resolve: createCartResolver,
 };
 
+const editCart = {
+  type: Cart,
+  args: {
+    cart: { type: EditCartInput },
+  },
+  resolve: editCartResolver,
+};
+
 //commit test
-const mutations = _.merge({ createCart });
+const mutations = _.merge({ createCart }, { editCart });
 
 export const cartMutations = {
   name: "Mutation",
