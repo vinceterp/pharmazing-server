@@ -23,6 +23,13 @@ export const Product = new GraphQLObjectType({
   },
 });
 
+export const GetProductInput = new GraphQLInputObjectType({
+  name: "GetProductInput",
+  fields: {
+    productId: { type: new GraphQLNonNull(GraphQLString) },
+  },
+});
+
 export const GetAllProductsInput = new GraphQLInputObjectType({
   name: "GetAllProductsInput",
   fields: {

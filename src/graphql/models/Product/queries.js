@@ -1,6 +1,6 @@
 import { GraphQLList } from "graphql";
-import { GetAllProductsInput, Product } from "./types.js";
-import { getAllProductsResolver } from "./resolvers.js";
+import { GetAllProductsInput, Product, GetProductInput } from "./types.js";
+import { getAllProductsResolver, getProductResolver } from "./resolvers.js";
 import _ from "lodash";
 
 const getAllProducts = {
@@ -13,7 +13,17 @@ const getAllProducts = {
   resolve: getAllProductsResolver,
 };
 
-const queries = _.merge({ getAllProducts });
+const getProduct = {
+  type: Product,
+  args: {
+    product: {
+      type: GetProductInput,
+    },
+  },
+  resolve: getProductResolver,
+};
+
+const queries = _.merge({ getAllProducts }, { getProduct });
 
 export const productQueries = {
   name: "Query",

@@ -18,6 +18,19 @@ export const getAllProductsResolver = async (_root, args, _context) => {
   }
 };
 
+export const getProductResolver = async (_root, args) => {
+  try {
+    const { product } = args;
+    const { productId } = product;
+    if (!productId) throw new GraphQLError("Product ID is required");
+    const productFound = await Product.findOne({ productId });
+    if (!productFound) throw new GraphQLError("Product not found");
+    return productFound;
+  } catch (e) {
+    return e;
+  }
+};
+
 export const createProductResolver = async (_root, args) => {
   try {
     const { product } = args;
