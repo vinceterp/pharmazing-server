@@ -25,6 +25,20 @@ export const CartItemInput = new GraphQLInputObjectType({
   },
 });
 
+export const EditCartInput = new GraphQLInputObjectType({
+  name: "EditCartInput",
+  fields: {
+    // userId: { type: new GraphQLNonNull(GraphQLString) },
+    cartId: { type: new GraphQLNonNull(GraphQLString) },
+    items: { type: new GraphQLList(CartItemInput) },
+    subtotal: { type: GraphQLFloat },
+    tax: { type: GraphQLFloat },
+    total: { type: GraphQLFloat },
+    shippingAddress: { type: GraphQLString },
+    billingAddress: { type: GraphQLString },
+  },
+});
+
 export const Cart = new GraphQLObjectType({
   name: "Cart",
   fields: {
