@@ -10,6 +10,7 @@ const createCart = {
   resolve: createCartResolver,
 };
 
+//commit test
 const mutations = _.merge({ createCart });
 
 export const cartMutations = {
