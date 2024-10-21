@@ -6,11 +6,15 @@ import _ from "lodash";
 export const getAllProductsResolver = async (_root, args, _context) => {
   try {
     const {
-      vendor: { vendorId },
+      vendor: { vendorId, productId },
     } = args;
-    const products = vendorId
-      ? await Product.find({ vendorId })
-      : await Product.find();
+
+    let products = [];
+    if (vendorId) {
+      products = await Product.find({ vendorId });
+    } else if (productId?.length > 0) {
+      products = await Product.find({ productId: { $in: productId } });
+    }
     if (!products.length) throw new GraphQLError("No products found");
     return products;
   } catch (e) {
