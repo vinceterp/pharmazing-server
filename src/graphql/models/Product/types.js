@@ -34,6 +34,7 @@ export const GetAllProductsInput = new GraphQLInputObjectType({
   name: "GetAllProductsInput",
   fields: {
     vendorId: { type: GraphQLString },
+    productId: { type: new GraphQLList(new GraphQLNonNull(GraphQLString)) },
   },
 });
 

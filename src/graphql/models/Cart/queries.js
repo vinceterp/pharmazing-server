@@ -1,4 +1,4 @@
-import { GraphQLString } from "graphql";
+import { GraphQLString, GraphQLNonNull } from "graphql";
 import { Cart } from "./types.js";
 // import { createCartResolver } from './resolvers.js';
 import _ from "lodash";
@@ -7,7 +7,7 @@ import { cartQueryResolver } from "./resolvers.js";
 const getCart = {
   type: Cart,
   args: {
-    userId: { type: GraphQLString },
+    userId: { type: new GraphQLNonNull(GraphQLString) },
   },
   resolve: cartQueryResolver,
 };

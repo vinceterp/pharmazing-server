@@ -3,7 +3,6 @@ import { Address } from "../../../db/models/Address.js";
 import { GraphQLError } from "graphql";
 import { VendorErrorMessage } from "../../../utils/enums.js";
 import { addressFieldResolver } from "../Address/resolvers.js";
-import { Product } from "../../../db/models/Product.js";
 
 export const getAllVendorsResolver = async (_root, _args, _context) => {
   try {
